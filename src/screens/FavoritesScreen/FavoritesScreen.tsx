@@ -17,6 +17,7 @@ import {
 } from '../../utils/zod/schemas';
 
 import styles from './styles';
+import Loader from '../../components/Loader/Loader';
 
 const FavoritesScreen = () => {
   const {lastData} = useSelector((state: RootState) => state.parsedLatestData);
@@ -27,6 +28,7 @@ const FavoritesScreen = () => {
     z.infer<typeof favoritesSchemas>[]
   >([]);
   const [date, setDate] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleFavorite = async (rateName: string) => {
     const updatedFavorites = allFavorites.includes(rateName)
@@ -38,6 +40,7 @@ const FavoritesScreen = () => {
   };
 
   const getLatesRates = async () => {
+    setIsLoading(true);
     let currentDate = new Date();
     if (lastData) {
       setLastDataToShow(lastData);
@@ -58,6 +61,7 @@ const FavoritesScreen = () => {
         hour12: false,
       }),
     );
+    setIsLoading(false);
   };
 
   const getData = async () => {
@@ -80,30 +84,32 @@ const FavoritesScreen = () => {
         )}
         {date && <Text style={styles.dateText}>Last update: {date}</Text>}
       </View>
-      {lastDataToShow ? (
-        <FlatList
-          contentContainerStyle={styles.contentContainerStyle}
-          data={Object.entries(lastDataToShow.rates)}
-          renderItem={({item: rate}) => {
-            const rateName = rate[0];
-            if (!allFavorites.includes(rateName)) return null;
+      <Loader isLoading={isLoading}>
+        {lastDataToShow ? (
+          <FlatList
+            contentContainerStyle={styles.contentContainerStyle}
+            data={Object.entries(lastDataToShow.rates)}
+            renderItem={({item: rate}) => {
+              const rateName = rate[0];
+              if (!allFavorites.includes(rateName)) return null;
 
-            return (
-              <RateComponent
-                rateName={rateName}
-                rateValue={rate[1]}
-                isFavorite={true}
-                handleFavorite={handleFavorite}
-              />
-            );
-          }}
-          keyExtractor={(_, index) => index.toString()}
-        />
-      ) : (
-        <Text style={styles.noCurrencies}>
-          No favorite currencies available
-        </Text>
-      )}
+              return (
+                <RateComponent
+                  rateName={rateName}
+                  rateValue={rate[1]}
+                  isFavorite={true}
+                  handleFavorite={handleFavorite}
+                />
+              );
+            }}
+            keyExtractor={(_, index) => index.toString()}
+          />
+        ) : (
+          <Text style={styles.noCurrencies}>
+            No favorite currencies available
+          </Text>
+        )}
+      </Loader>
     </View>
   );
 };

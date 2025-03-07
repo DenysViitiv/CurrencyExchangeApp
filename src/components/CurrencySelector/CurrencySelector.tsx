@@ -43,7 +43,6 @@ const CurrencySelector = ({
       <TextInput
         ref={inputRef}
         onFocus={() => setIsListVisible(true)}
-        onBlur={() => setIsListVisible(false)}
         style={styles.searchInput}
         placeholder={selectedCurrency || 'Search Currency'}
         placeholderTextColor={colors.gray}

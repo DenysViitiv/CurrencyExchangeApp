@@ -3,7 +3,6 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
-  Platform,
   RefreshControl,
   Text,
   TextInput,
@@ -31,8 +30,8 @@ import {
   requestLatestDataSchema,
 } from '../../utils/zod/schemas';
 
+import {colors} from '../../utils/constants/colors';
 import styles from './styles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -132,8 +131,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView behavior={'padding'}>
         <View style={styles.headerView}>
           <CurrencySelector
             currencies={allCurrencies}
@@ -152,6 +150,7 @@ const HomeScreen = () => {
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 maxLength={3}
+                placeholderTextColor={colors.gray}
               />
             </>
           )}
